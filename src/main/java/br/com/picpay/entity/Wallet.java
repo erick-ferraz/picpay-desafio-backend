@@ -16,9 +16,9 @@ public class Wallet {
     private String name;
     private String cpfCnpj;
     private String email;
-    private BigDecimal balance;
+    private BigDecimal balance = BigDecimal.ZERO;
     private String password;
     @ManyToOne
-    @JoinColumn(name = "owner_id")
-    private Owner owner;
+    @JoinColumn(name = "owner_type_id")
+    private OwnerType ownerType;
 }

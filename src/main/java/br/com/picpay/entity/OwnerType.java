@@ -1,16 +1,18 @@
 package br.com.picpay.entity;
 
-import br.com.picpay.entity.enums.OwnerType;
+import br.com.picpay.entity.enums.Type;
 import jakarta.persistence.*;
 import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "tb_owner")
-public class Owner {
+@Table(name = "tb_owner_type")
+public class OwnerType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private OwnerType type;
+
+    @Enumerated(EnumType.STRING)
+    private Type type;
 }
