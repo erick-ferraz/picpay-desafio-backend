@@ -19,6 +19,7 @@ public class Wallet {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    @Column(name = "cpf_cnpj")
     private String cpfCnpj;
     private String email;
     private BigDecimal balance = BigDecimal.ZERO;
