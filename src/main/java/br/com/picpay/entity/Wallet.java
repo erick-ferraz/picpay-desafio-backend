@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 @Data
 @AllArgsConstructor
@@ -34,5 +35,17 @@ public class Wallet {
         this.email = email;
         this.password = password;
         this.ownerType = type.toOwnerType();
+    }
+
+    public boolean isUser() {
+        return Objects.equals(ownerType.getType(), Type.USER.toString());
+    }
+
+    public void debit(BigDecimal amount) {
+        this.balance = balance.subtract(amount);
+    }
+
+    public void credit(BigDecimal amount) {
+        this.balance = balance.add(amount);
     }
 }

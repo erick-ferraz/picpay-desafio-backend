@@ -2,14 +2,15 @@ package br.com.picpay.exception;
 
 import br.com.picpay.entity.dto.ApiErrorDto;
 import io.netty.handler.codec.http.HttpResponseStatus;
+
 import java.time.LocalDateTime;
 import java.util.Collections;
 
-public class AlreadyRegisteredDataException extends DefaultException {
+public class OwnerTypeException extends DefaultException {
 
     private String message;
 
-    public AlreadyRegisteredDataException(String message) {
+    public OwnerTypeException(String message) {
         this.message = message;
     }
 
@@ -18,7 +19,7 @@ public class AlreadyRegisteredDataException extends DefaultException {
         return new ApiErrorDto(
             HttpResponseStatus.UNPROCESSABLE_ENTITY.code(),
             LocalDateTime.now(),
-            "Data already registered in database",
+            "Action not allowed due owner type",
             message,
             Collections.emptyMap()
         );

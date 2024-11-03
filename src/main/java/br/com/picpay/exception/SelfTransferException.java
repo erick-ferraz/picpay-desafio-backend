@@ -2,17 +2,16 @@ package br.com.picpay.exception;
 
 import br.com.picpay.entity.dto.ApiErrorDto;
 import io.netty.handler.codec.http.HttpResponseStatus;
+
 import java.time.LocalDateTime;
-import java.util.Map;
+import java.util.Collections;
 
-public class InputValidationException extends DefaultException {
+public class SelfTransferException extends DefaultException {
 
-    private final String message;
-    private final Map<String, String> errors;
+    private String message;
 
-    public InputValidationException(String message, Map<String, String> errors) {
+    public SelfTransferException(String message) {
         this.message = message;
-        this.errors = errors;
     }
 
     @Override
@@ -20,9 +19,9 @@ public class InputValidationException extends DefaultException {
         return new ApiErrorDto(
             HttpResponseStatus.BAD_REQUEST.code(),
             LocalDateTime.now(),
-            "Input validation failed",
+            "Self transfer error",
             message,
-            errors
+            Collections.emptyMap()
         );
     }
 }

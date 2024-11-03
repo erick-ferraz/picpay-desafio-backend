@@ -12,7 +12,7 @@ import java.util.Objects;
 @ApplicationScoped
 public class WalletService {
 
-    private WalletRepository repository;
+    private final WalletRepository repository;
 
     public WalletService(WalletRepository repository) {
         this.repository = repository;
