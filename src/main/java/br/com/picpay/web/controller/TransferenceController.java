@@ -2,14 +2,11 @@ package br.com.picpay.web.controller;
 
 import br.com.picpay.entity.dto.TransferenceRequestDto;
 import br.com.picpay.service.TransferenceService;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-@Path("/transfer")
+@Path("/transference")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class TransferenceController {
@@ -21,9 +18,34 @@ public class TransferenceController {
     }
 
     @POST
+    @Path("/transfer")
     public Response transfer(TransferenceRequestDto dto) {
         return Response.ok()
             .entity(service.transfer(dto))
+            .build();
+    }
+
+    @GET
+    @Path("/{id}")
+    public Response getSingleTransferenceById(@PathParam("id") Long id) {
+        return Response.ok()
+            .entity(service.getById(id))
+            .build();
+    }
+
+    @GET
+    @Path("/wallet/sent/{id}")
+    public Response listAllTransfersSentByWalletId(@PathParam("id") Long walletId) {
+        return Response.ok()
+            .entity(service.listAllTransfersSentByWalletId(walletId))
+            .build();
+    }
+
+    @GET
+    @Path("/wallet/received/{id}")
+    public Response listAllTransfersReceivedByWalletId(@PathParam("id") Long walletId) {
+        return Response.ok()
+            .entity(service.listAllTransfersReceivedByWalletId(walletId))
             .build();
     }
 }

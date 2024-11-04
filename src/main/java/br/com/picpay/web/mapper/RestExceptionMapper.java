@@ -57,4 +57,11 @@ public class RestExceptionMapper {
             .entity(e.toApiErrorModel())
             .build();
     }
+
+    @ServerExceptionMapper(NonExistentTransferenceException.class)
+    public Response toResponse(NonExistentTransferenceException e) {
+        return Response.status(HttpResponseStatus.NOT_FOUND.code())
+            .entity(e.toApiErrorModel())
+            .build();
+    }
 }

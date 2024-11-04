@@ -17,6 +17,7 @@ import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @ApplicationScoped
 public class TransferenceService {
@@ -45,7 +46,7 @@ public class TransferenceService {
         Wallet payer = walletRepository.getById(dto.payer());
         Wallet payee = walletRepository.getById(dto.payee());
 
-        validateBusinessLogic(payer, dto.amount());
+        validateTransferBusinessLogic(payer, dto.amount());
 
         payer.debit(dto.amount());
         payee.credit(dto.amount());
@@ -72,8 +73,8 @@ public class TransferenceService {
         return transference;
     }
 
-    private void validateBusinessLogic(Wallet payer,
-                                       BigDecimal amount) {
+    private void validateTransferBusinessLogic(Wallet payer,
+                                               BigDecimal amount) {
         if(!payer.isUser()) {
             throw new OwnerTypeException("Only owners with USER type can make transfers");
         }
@@ -89,5 +90,21 @@ public class TransferenceService {
                 throw new UnauthorizedTransferException("Not authorized to make transfers");
             }
         }
+    }
+
+    public Transference getById(Long id) {
+        return transferenceRepository.getById(id);
+    }
+
+    public List<Transference> listAllTransfersSentByWalletId(Long walletId) {
+        return transferenceRepository.listAll().stream()
+            .filter(transference -> transference.getPayer().equals(walletId))
+            .toList();
+    }
+
+    public List<Transference> listAllTransfersReceivedByWalletId(Long walletId) {
+        return transferenceRepository.listAll().stream()
+            .filter(transference -> transference.getPayee().equals(walletId))
+            .toList();
     }
 }
