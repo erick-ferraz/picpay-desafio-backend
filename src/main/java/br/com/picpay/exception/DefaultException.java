@@ -8,12 +8,20 @@ import java.util.Collections;
 
 public class DefaultException extends RuntimeException {
 
+    private String message;
+
+    public DefaultException(String message) {
+        this.message = message;
+    }
+
+    public DefaultException() {}
+
     public ApiErrorDto toApiErrorModel() {
         return new ApiErrorDto(
             HttpResponseStatus.INTERNAL_SERVER_ERROR.code(),
             LocalDateTime.now(),
             "Internal server error",
-            "Something went wrong",
+            message,
             Collections.emptyMap()
         );
     }

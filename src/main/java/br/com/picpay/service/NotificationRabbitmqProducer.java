@@ -16,6 +16,6 @@ public class NotificationRabbitmqProducer {
 
     public void sendNotificationToQueue(NotificationEventDto notification) {
         emitter.send(notification);
-        Log.info("Evento de notificacao enviado para fila");
+        Log.info("Notification event sent to broker");
     }
 }
