@@ -10,7 +10,6 @@ import br.com.picpay.exception.*;
 import br.com.picpay.repository.TransferenceRepository;
 import br.com.picpay.repository.WalletRepository;
 import io.netty.handler.codec.http.HttpResponseStatus;
-import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -18,8 +17,6 @@ import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.Optional;
 
 @ApplicationScoped
 public class TransferenceService {
@@ -60,7 +57,6 @@ public class TransferenceService {
         Transference transference = dto.toEntity();
         transferenceRepository.persist(transference);
 
-        //Notificar o recebedor enviando um evento de transferencia para uma fila no rabbit
         NotificationEventDto notification = new NotificationEventDto(
             "You received a transference!",
             new TransferenceNotificationDto(
@@ -71,7 +67,7 @@ public class TransferenceService {
             )
         );
 
-        notificationProducer.sendNotification(notification);
+        notificationProducer.sendNotificationToQueue(notification);
 
         return transference;
     }
