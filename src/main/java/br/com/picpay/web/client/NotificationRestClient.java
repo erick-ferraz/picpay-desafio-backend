@@ -1,4 +1,4 @@
-package br.com.picpay.client;
+package br.com.picpay.web.client;
 
 import br.com.picpay.entity.dto.NotificationEventDto;
 import jakarta.enterprise.context.ApplicationScoped;

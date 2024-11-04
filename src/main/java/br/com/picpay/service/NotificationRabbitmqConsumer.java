@@ -1,6 +1,6 @@
 package br.com.picpay.service;
 
-import br.com.picpay.client.NotificationRestClient;
+import br.com.picpay.web.client.NotificationRestClient;
 import br.com.picpay.entity.dto.NotificationEventDto;
 import io.quarkus.logging.Log;
 import io.smallrye.reactive.messaging.annotations.Blocking;

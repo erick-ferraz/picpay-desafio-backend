@@ -1,4 +1,4 @@
-package br.com.picpay.controller;
+package br.com.picpay.web.controller;
 
 import br.com.picpay.entity.dto.WalletRequestDto;
 import br.com.picpay.service.WalletService;

@@ -1,4 +1,4 @@
-package br.com.picpay.controller.mapper;
+package br.com.picpay.web.mapper;
 
 import br.com.picpay.exception.*;
 import io.netty.handler.codec.http.HttpResponseStatus;

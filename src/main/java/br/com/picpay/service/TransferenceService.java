@@ -1,6 +1,6 @@
 package br.com.picpay.service;
 
-import br.com.picpay.client.AuthorizerRestClient;
+import br.com.picpay.web.client.AuthorizerRestClient;
 import br.com.picpay.entity.Transference;
 import br.com.picpay.entity.Wallet;
 import br.com.picpay.entity.dto.NotificationEventDto;
