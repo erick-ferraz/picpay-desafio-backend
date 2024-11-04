@@ -41,6 +41,10 @@ public class Wallet {
         return Objects.equals(ownerType.getType(), Type.USER.toString());
     }
 
+    public boolean hasBalance() {
+        return this.balance.compareTo(BigDecimal.ZERO) > 0;
+    }
+
     public void debit(BigDecimal amount) {
         this.balance = balance.subtract(amount);
     }
