@@ -45,7 +45,7 @@ public class TransferenceService {
         Wallet payer = walletRepository.getById(dto.payer());
         Wallet payee = walletRepository.getById(dto.payee());
 
-        validateBusinessLogic(payer, payee, dto.amount());
+        validateBusinessLogic(payer, dto.amount());
 
         payer.debit(dto.amount());
         payee.credit(dto.amount());
@@ -73,14 +73,9 @@ public class TransferenceService {
     }
 
     private void validateBusinessLogic(Wallet payer,
-                                       Wallet payee,
                                        BigDecimal amount) {
         if(!payer.isUser()) {
             throw new OwnerTypeException("Only owners with USER type can make transfers");
-        }
-
-        if(payer == payee) {
-            throw new SelfTransferException("Transfers to same account are not allowed");
         }
 
         if(amount.compareTo(payer.getBalance()) > 0) {
