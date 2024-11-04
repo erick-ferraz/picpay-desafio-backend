@@ -3,11 +3,14 @@ package br.com.picpay.service;
 import br.com.picpay.client.AuthorizerRestClient;
 import br.com.picpay.entity.Transference;
 import br.com.picpay.entity.Wallet;
+import br.com.picpay.entity.dto.NotificationEventDto;
+import br.com.picpay.entity.dto.TransferenceNotificationDto;
 import br.com.picpay.entity.dto.TransferenceRequestDto;
 import br.com.picpay.exception.*;
 import br.com.picpay.repository.TransferenceRepository;
 import br.com.picpay.repository.WalletRepository;
 import io.netty.handler.codec.http.HttpResponseStatus;
+import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -23,19 +26,23 @@ public class TransferenceService {
 
     private final TransferenceRepository transferenceRepository;
     private final WalletRepository walletRepository;
+    private final NotificationRabbitmqProducer notificationProducer;
 
     @RestClient
     @Inject
     AuthorizerRestClient client;
 
     public TransferenceService(TransferenceRepository transferenceRepository,
-                               WalletRepository walletRepository) {
+                               WalletRepository walletRepository,
+                               NotificationRabbitmqProducer notificationProducer) {
+
         this.transferenceRepository = transferenceRepository;
         this.walletRepository = walletRepository;
+        this.notificationProducer = notificationProducer;
     }
 
     @Transactional
-    public Object transfer(TransferenceRequestDto dto) {
+    public Transference transfer(TransferenceRequestDto dto) {
         dto.validateFields();
 
         Wallet payer = walletRepository.getById(dto.payer());
@@ -54,6 +61,17 @@ public class TransferenceService {
         transferenceRepository.persist(transference);
 
         //Notificar o recebedor enviando um evento de transferencia para uma fila no rabbit
+        NotificationEventDto notification = new NotificationEventDto(
+            "You received a transference!",
+            new TransferenceNotificationDto(
+                payee.getEmail(),
+                payer.getEmail(),
+                transference.getAmount(),
+                transference.getDateTime()
+            )
+        );
+
+        notificationProducer.sendNotification(notification);
 
         return transference;
     }
