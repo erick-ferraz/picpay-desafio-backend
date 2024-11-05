@@ -14,7 +14,9 @@ import jakarta.transaction.Transactional;
 import jakarta.ws.rs.core.Response;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 @ApplicationScoped
 public class TransferenceService {
@@ -89,6 +91,10 @@ public class TransferenceService {
     }
 
     public Transference getById(Long id) {
+        if(Objects.isNull(id)) {
+            throw new InputValidationException("Id is required", Collections.emptyMap());
+        }
+
         return transferenceRepository.getById(id);
     }
 

@@ -12,6 +12,10 @@ public record TransferenceRequestDto(BigDecimal amount,
                                      Long payer,
                                      Long payee) {
 
+    public TransferenceRequestDto() {
+        this(null, null, null);
+    }
+
     public void validateFields() {
         Map<String, String> errors = new HashMap<>();
 
