@@ -39,6 +39,9 @@ public class WalletService {
     }
 
     public Wallet getById(Long id) {
+        if(Objects.isNull(id)) {
+            throw new InputValidationException("Id is required", Collections.emptyMap());
+        }
         return repository.getById(id);
     }
 
@@ -52,8 +55,9 @@ public class WalletService {
     public void updateById(Long id, UpdateWalletParamsDto dto) {
         dto.validateFields();
 
-        if(Objects.isNull(id)) {
-            throw new InputValidationException("Id is required", Collections.emptyMap());
+        Wallet dbWallet = repository.getByEmail(dto.email());
+        if(Objects.nonNull(dbWallet)) {
+            throw new AlreadyRegisteredDataException("Email already exists");
         }
 
         Wallet wallet = getById(id);
@@ -65,10 +69,6 @@ public class WalletService {
 
     @Transactional
     public void deleteById(Long id) {
-        if(Objects.isNull(id)) {
-            throw new InputValidationException("Id is required", Collections.emptyMap());
-        }
-
         Wallet wallet = getById(id);
         if(wallet.hasBalance()) {
             throw new DefaultException("You must have no balance to delete wallet");

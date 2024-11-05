@@ -13,6 +13,10 @@ public class WalletRepository implements PanacheRepository<Wallet> {
             .firstResult();
     }
 
+    public Wallet getByEmail(String email) {
+        return find("email = ?1", email).firstResult();
+    }
+
     public Wallet getById(Long id) {
         return findByIdOptional(id)
             .orElseThrow(() -> new NonExistentWalletException("Provided wallet could not be found"));
