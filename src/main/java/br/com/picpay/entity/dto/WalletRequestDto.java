@@ -42,7 +42,7 @@ public record WalletRequestDto(String name,
             errors.put("type", "Type is required");
         } else {
             try {
-                Type.valueOf(type.toString());
+                Type.valueOf(type.toString().toUpperCase());
             } catch (IllegalArgumentException e) {
                 errors.put("type", "Type is not valid");
             }

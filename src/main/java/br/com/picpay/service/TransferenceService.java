@@ -1,6 +1,5 @@
 package br.com.picpay.service;
 
-import br.com.picpay.web.client.AuthorizerRestClient;
 import br.com.picpay.entity.Transference;
 import br.com.picpay.entity.Wallet;
 import br.com.picpay.entity.dto.NotificationEventDto;
@@ -11,12 +10,13 @@ import br.com.picpay.repository.TransferenceRepository;
 import br.com.picpay.repository.WalletRepository;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.core.Response;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 @ApplicationScoped
 public class TransferenceService {
@@ -24,18 +24,17 @@ public class TransferenceService {
     private final TransferenceRepository transferenceRepository;
     private final WalletRepository walletRepository;
     private final NotificationRabbitmqProducer notificationProducer;
-
-    @RestClient
-    @Inject
-    AuthorizerRestClient client;
+    private final AuthorizerClient authorizerClient;
 
     public TransferenceService(TransferenceRepository transferenceRepository,
                                WalletRepository walletRepository,
-                               NotificationRabbitmqProducer notificationProducer) {
+                               NotificationRabbitmqProducer notificationProducer,
+                               AuthorizerClient authorizerClient) {
 
         this.transferenceRepository = transferenceRepository;
         this.walletRepository = walletRepository;
         this.notificationProducer = notificationProducer;
+        this.authorizerClient = authorizerClient;
     }
 
     @Transactional
@@ -45,7 +44,7 @@ public class TransferenceService {
         Wallet payer = walletRepository.getById(dto.payer());
         Wallet payee = walletRepository.getById(dto.payee());
 
-        validateBusinessLogic(payer, dto.amount());
+        validateTransferBusinessLogic(payer, dto.amount());
 
         payer.debit(dto.amount());
         payee.credit(dto.amount());
@@ -72,8 +71,8 @@ public class TransferenceService {
         return transference;
     }
 
-    private void validateBusinessLogic(Wallet payer,
-                                       BigDecimal amount) {
+    private void validateTransferBusinessLogic(Wallet payer,
+                                               BigDecimal amount) {
         if(!payer.isUser()) {
             throw new OwnerTypeException("Only owners with USER type can make transfers");
         }
@@ -84,10 +83,30 @@ public class TransferenceService {
     }
 
     private void consultAuthorizer() {
-        try(Response response = client.consultAuthorizer()) {
+        try(Response response = authorizerClient.requestClient()) {
             if(response.getStatus() != HttpResponseStatus.OK.code()) {
                 throw new UnauthorizedTransferException("Not authorized to make transfers");
             }
         }
+    }
+
+    public Transference getById(Long id) {
+        if(Objects.isNull(id)) {
+            throw new InputValidationException("Id is required", Collections.emptyMap());
+        }
+
+        return transferenceRepository.getById(id);
+    }
+
+    public List<Transference> listAllTransfersSentByWalletId(Long walletId) {
+        return transferenceRepository.listAll().stream()
+            .filter(transference -> transference.getPayer().equals(walletId))
+            .toList();
+    }
+
+    public List<Transference> listAllTransfersReceivedByWalletId(Long walletId) {
+        return transferenceRepository.listAll().stream()
+            .filter(transference -> transference.getPayee().equals(walletId))
+            .toList();
     }
 }

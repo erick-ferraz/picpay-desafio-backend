@@ -6,21 +6,20 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import java.time.LocalDateTime;
 import java.util.Collections;
 
-public class DefaultException extends RuntimeException {
+public class NonExistentTransferenceException extends DefaultException {
 
     private String message;
 
-    public DefaultException(String message) {
+    public NonExistentTransferenceException(String message) {
         this.message = message;
     }
 
-    public DefaultException() {}
-
+    @Override
     public ApiErrorDto toApiErrorModel() {
         return new ApiErrorDto(
-            HttpResponseStatus.INTERNAL_SERVER_ERROR.code(),
+            HttpResponseStatus.NOT_FOUND.code(),
             LocalDateTime.now(),
-            "Internal server error",
+            "Non existent transference in database",
             message,
             Collections.emptyMap()
         );

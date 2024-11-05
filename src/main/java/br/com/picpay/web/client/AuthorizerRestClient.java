@@ -1,6 +1,5 @@
 package br.com.picpay.web.client;
 
-import br.com.picpay.entity.dto.AuthorizerDto;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Produces;
