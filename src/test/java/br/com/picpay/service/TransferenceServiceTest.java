@@ -92,8 +92,62 @@ public class TransferenceServiceTest {
         @Test
         @DisplayName("Method should throw InputValidationException if any required field is not provided")
         void methodShouldThrowInputValidationExceptionIfAnyRequiredFieldIsNotProvided() {
-            TransferenceRequestDto dto = new TransferenceRequestDto();
-            assertThrows(InputValidationException.class, () -> service.transfer(dto));
+            var withoutEverythingDto = new TransferenceRequestDto(
+                null,
+                null,
+                null
+            );
+
+            assertThrows(InputValidationException.class, () -> service.transfer(withoutEverythingDto));
+
+            var onlyWithAmount = new TransferenceRequestDto(
+                BigDecimal.TEN,
+                null,
+                null
+            );
+
+            assertThrows(InputValidationException.class, () -> service.transfer(onlyWithAmount));
+
+            var onlyWithPayer = new TransferenceRequestDto(
+                null,
+                1L,
+                null
+            );
+
+            assertThrows(InputValidationException.class, () -> service.transfer(onlyWithPayer));
+
+            var onlyWithPayee = new TransferenceRequestDto(
+                null,
+                null,
+                2L
+            );
+
+            assertThrows(InputValidationException.class, () -> service.transfer(onlyWithPayee));
+
+            var withoutAmount = new TransferenceRequestDto(
+                null,
+                1L,
+                2L
+            );
+
+            assertThrows(InputValidationException.class, () -> service.transfer(withoutAmount));
+
+            var withoutPayer = new TransferenceRequestDto(
+                BigDecimal.TEN,
+                null,
+                2L
+            );
+
+            assertThrows(InputValidationException.class, () -> service.transfer(withoutPayer));
+
+            var withoutPayee = new TransferenceRequestDto(
+                BigDecimal.TEN,
+                1L,
+                null
+            );
+
+            assertThrows(InputValidationException.class, () -> service.transfer(withoutPayee));
+            verifyNoInteractions(transferenceRepository, walletRepository);
         }
 
         @Test
