@@ -7,9 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 
 @QuarkusTest
 public class TransferenceServiceTest {
@@ -22,6 +20,9 @@ public class TransferenceServiceTest {
 
     @Mock
     WalletRepository walletRepository;
+
+    @Mock
+    NotificationRabbitmqProducer notificationProducer;
 
     @BeforeEach
     void setup() {

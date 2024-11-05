@@ -1,6 +1,5 @@
 package br.com.picpay.service;
 
-import br.com.picpay.web.client.AuthorizerRestClient;
 import br.com.picpay.entity.Transference;
 import br.com.picpay.entity.Wallet;
 import br.com.picpay.entity.dto.NotificationEventDto;
@@ -11,10 +10,8 @@ import br.com.picpay.repository.TransferenceRepository;
 import br.com.picpay.repository.WalletRepository;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.core.Response;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -25,18 +22,17 @@ public class TransferenceService {
     private final TransferenceRepository transferenceRepository;
     private final WalletRepository walletRepository;
     private final NotificationRabbitmqProducer notificationProducer;
-
-    @RestClient
-    @Inject
-    AuthorizerRestClient client;
+    private final AuthorizerClient authorizerClient;
 
     public TransferenceService(TransferenceRepository transferenceRepository,
                                WalletRepository walletRepository,
-                               NotificationRabbitmqProducer notificationProducer) {
+                               NotificationRabbitmqProducer notificationProducer,
+                               AuthorizerClient authorizerClient) {
 
         this.transferenceRepository = transferenceRepository;
         this.walletRepository = walletRepository;
         this.notificationProducer = notificationProducer;
+        this.authorizerClient = authorizerClient;
     }
 
     @Transactional
@@ -85,7 +81,7 @@ public class TransferenceService {
     }
 
     private void consultAuthorizer() {
-        try(Response response = client.consultAuthorizer()) {
+        try(Response response = authorizerClient.requestClient()) {
             if(response.getStatus() != HttpResponseStatus.OK.code()) {
                 throw new UnauthorizedTransferException("Not authorized to make transfers");
             }
